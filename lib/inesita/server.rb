@@ -10,9 +10,10 @@ module Inesita
     def assets
       Sprockets::Environment.new.tap do |s|
         # register engines
-        s.register_engine '.slim', Slim::Template
-        s.register_engine '.rb', Opal::Processor
+        s.register_engine '.slim',   Slim::Template
+        s.register_engine '.rb',     Opal::Processor
         s.register_engine '.coffee', CoffeeScriptProcessor
+        s.register_engine '.js',     JavaScriptProcessor
 
         # add folders
         s.append_path 'app'

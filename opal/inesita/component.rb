@@ -59,7 +59,7 @@ module Inesita
     end
 
     def component(comp, opts = {})
-      `console.log("rendering component: "+comp)`
+      # `console.log("rendering component: "+comp)`
       fail "Component is nil in #{self.class} class" if comp.nil?
       @__virtual_nodes__ ||= []
       @__virtual_nodes__ << (cache_component(comp) do

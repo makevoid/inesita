@@ -12,6 +12,7 @@ module Inesita
         # register engines
         s.register_engine '.slim', Slim::Template
         s.register_engine '.rb', Opal::Processor
+        s.register_engine '.coffee', CoffeeScriptProcessor
 
         # add folders
         s.append_path 'app'
@@ -65,9 +66,11 @@ module Inesita
           run assets_app
         end
 
-        map SOURCE_MAP_PREFIX do
-          run source_maps_app
-        end
+        # 1st goal: make this thing fast, bye sourcemaps! - TODO: enable the commendted code via a sourcemap= flag
+        #
+        # map SOURCE_MAP_PREFIX do
+        #   run source_maps_app
+        # end
       end
     end
   end

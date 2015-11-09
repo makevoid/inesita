@@ -24,6 +24,6 @@ class InesitaCLI < Thor
   end
 
   def self.source_root
-    File.dirname(__FILE__)
+    File.dirname __FILE__
   end
 end

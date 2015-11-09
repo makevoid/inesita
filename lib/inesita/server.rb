@@ -3,7 +3,7 @@ require 'rack/rewrite'
 module Inesita
   module Server
     SOURCE_MAP_PREFIX = '/__OPAL_MAPS__'
-    ASSETS_PREFIX = '/__ASSETS__'
+    ASSETS_PREFIX     = '/__ASSETS__'
 
     module_function
 
@@ -12,8 +12,6 @@ module Inesita
         # register engines
         s.register_engine '.slim',   Slim::Template
         s.register_engine '.rb',     Opal::Processor
-        s.register_engine '.coffee', CoffeeScriptProcessor
-        s.register_engine '.js',     JavaScriptProcessor
 
         # add folders
         s.append_path 'app'
@@ -43,10 +41,10 @@ module Inesita
       end
     end
 
-    def source_maps(sprockets)
-      ::Opal::Sprockets::SourceMapHeaderPatch.inject!(SOURCE_MAP_PREFIX)
-      Opal::SourceMapServer.new(sprockets, SOURCE_MAP_PREFIX)
-    end
+    # def source_maps(sprockets)
+    #   ::Opal::Sprockets::SourceMapHeaderPatch.inject!(SOURCE_MAP_PREFIX)
+    #   Opal::SourceMapServer.new(sprockets, SOURCE_MAP_PREFIX)
+    # end
 
     def development_mode
       $DEVELOPMENT_MODE = ENV['DEVELOPMENT_MODE'] || true
@@ -55,10 +53,26 @@ module Inesita
     def create
       development_mode
       assets_app = assets
-      source_maps_app = source_maps(assets_app)
-      set_global_vars(assets_app, true)
+      # source_maps_app = source_maps(assets_app)
+      set_global_vars assets_app, true
 
       Rack::Builder.new do
+        # use Rack::Static, urls: ["/vendor"], root: File.expand_path("~/apps/BitNFC_reactive/vendor")
+
+        map "/vendor" do
+          run -> (env) {
+            path = env['PATH_INFO']
+            [
+              200,
+              {
+                'Content-Type'  => 'text/javascript',
+              },
+              # ["Antani"]
+              File.open("./vendor#{path}")
+            ]
+          }
+        end
+
         use Rack::Rewrite do
           rewrite %r[^(?!#{ASSETS_PREFIX}|#{SOURCE_MAP_PREFIX}).*], ASSETS_PREFIX
         end
@@ -66,7 +80,6 @@ module Inesita
         map ASSETS_PREFIX do
           run assets_app
         end
-
         # 1st goal: make this thing fast, bye sourcemaps! - TODO: enable the commendted code via a sourcemap= flag
         #
         # map SOURCE_MAP_PREFIX do

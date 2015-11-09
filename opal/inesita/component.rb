@@ -23,6 +23,7 @@ module Inesita
     def render_virtual_dom
       @__virtual_nodes__ = []
       render
+      after_render if self.respond_to? :after_render
       if @__virtual_nodes__.length == 1
         @__virtual_nodes__.first
       else
@@ -58,14 +59,16 @@ module Inesita
     end
 
     def component(comp, opts = {})
+      `console.log("rendering component: "+comp)`
       fail "Component is nil in #{self.class} class" if comp.nil?
       @__virtual_nodes__ ||= []
-      @__virtual_nodes__ << cache_component(comp) do
+      @__virtual_nodes__ << (cache_component(comp) do
         (comp.is_a?(Class) ? comp.new : comp)
           .with_root_component(@root_component)
           .with_router(@router)
           .with_store(@store)
-      end.with_props(opts[:props] || {}).render_virtual_dom
+      end.with_props(opts[:props] || {}).render_virtual_dom)
+
     end
   end
 end
